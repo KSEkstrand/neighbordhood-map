@@ -1,0 +1,32 @@
+{
+  "name": "neighborhood-map",
+  "version": "1.0.0",
+  "description": "Applicaiton for showing location data for city ordinance inspections in Anchorage, AK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KSEkstrand/neighbordhood-map.git"
+  },
+  "keywords": [
+    "Udacity"
+  ],
+  "author": "Kyle Ekstrand",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/KSEkstrand/neighbordhood-map/issues"
+  },
+  "homepage": "https://github.com/KSEkstrand/neighbordhood-map#readme",
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "jquery": "^3.3.1",
+    "knockout": "^3.4.2",
+    "popper.js": "^1.14.3"
+  },
+  "devDependencies": {
+    "webpack": "^4.8.2",
+    "webpack-cli": "^2.1.3"
+  }
+}
