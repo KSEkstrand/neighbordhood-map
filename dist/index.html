@@ -2,10 +2,24 @@
 <html>
   <head>
 
+
   </head>
   <body>
+
+    <div id="map">
+    </div>
+
+
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
      type="text/javascript"></script>
-    <script scr="dist/bundle.js"></script>
+    <script>
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+      });
+    }
+    </script>
+    <script src="./bundle.js"></script>
   </body>
 </html>
