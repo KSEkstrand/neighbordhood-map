@@ -1,11 +1,82 @@
 /* Always set the map height explicitly to define the size of the div
  * element that contains the map. */
 #map {
-  height: 100%;
+  height: calc(100% - 72px);
+  width: 100%;
 }
-/* Optional: Makes the sample page fill the window. */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+
+.navbar-brand{
+  margin-left: 20px;
+}
+#content, #sidebar{
+  flex: 1 1 0;
+  height: 100vh;
+}
+
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+    background-color:#f9eddb;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+}
+.map-icon-border{
+   border-radius: 10px;
+   border-color: #007bff;
+   border-style: solid;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+#sidebarCollapse:hover{
+  color:#42bcf4;
+}
+
+#sidebar {
+  transition: all 0.3s;
+  border-right: 2px solid #828696;
+}
+
+.navbar {
+  border-bottom: 2px solid #828696;
+}
+
+.center-nav{
+  width: 100%;
+}
+
+#sidebar .sidebar-header {
+  padding: 15px;
+  background: #6d7fcc;
+}
+
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+}
+
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
 }
