@@ -1,6 +1,11 @@
 import {LocationViewModel} from './LocationViewModel.js';
 import * as ko from 'knockout';
 
+var buildInfoWindow = function(data){
+  // '<div>'
+  return "";
+};
+
 function MapLocationModel(data,index) {
     this.business_address = data.business_address;
     this.business_id = data.business_id;
@@ -18,7 +23,7 @@ function MapLocationModel(data,index) {
     this.location_state = data.location_state;
     this.location_zip = data.location_zip;
     this.id = "mapId" + index;
-
+    this.infoWindow = buildInfoWindow(data);
 
 }
 
