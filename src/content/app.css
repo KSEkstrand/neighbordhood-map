@@ -31,6 +31,7 @@
 #sidebar {
     min-width: 250px;
     max-width: 250px;
+    overflow: hidden;
 }
 .map-icon-border{
    border-radius: 10px;
@@ -49,6 +50,7 @@ a[data-toggle="collapse"] {
 #sidebar {
   transition: all 0.3s;
   border-right: 2px solid #828696;
+  overflow: auto;
 }
 
 .navbar {
@@ -64,13 +66,11 @@ a[data-toggle="collapse"] {
   background: #6d7fcc;
 }
 
-
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
     background: #6d7fcc;
 }
-
 
 @media (max-width: 768px) {
     #sidebar {

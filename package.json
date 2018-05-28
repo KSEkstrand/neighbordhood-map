@@ -25,7 +25,8 @@
     "jquery": "^3.3.1",
     "knockout": "^3.4.2",
     "knockout-mapping": "^2.6.0",
-    "popper.js": "^1.14.3"
+    "popper.js": "^1.14.3",
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
     "css-loader": "^0.28.11",

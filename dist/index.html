@@ -17,10 +17,11 @@
 
       <!--this is the sidebar for filtering-->
       <nav id="sidebar">
-        <input id="filter" class="nav nav-pills flex-column"></input>
-        <ul id="locationsContainer" class="nav nav-pills flex-column">
+        <input id="filter" class="nav nav-pills flex-column" data-bind="value: mapFilter"></input>
+        <ul id="locationsContainer" data-bind="foreach: filterMapData" class="nav nav-pills flex-column">
           <li class="nav-item">
-            <a>
+            <a href="#">
+              <span data-bind="text: business_name"></span>
             </a>
           </li>
         </ul>
@@ -46,9 +47,10 @@
       </div>
     </div>
 
+
+
     <!--this is the area for inline scripting-->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
-     type="text/javascript"></script>
+
 
     <script>
     function initMap() {
@@ -61,6 +63,8 @@
     </script>
 
     <!--this is the area for loading all other scripts-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
+     type="text/javascript"></script>
     <script src="./bundle.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" async integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
   </body>

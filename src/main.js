@@ -1,38 +1,85 @@
 import * as ko from 'knockout';
-import {MapLocationViewModel} from './viewmodels/MapLocationViewModel.js';
-import './content/app.css';
+import * as kop from './knockout-projections.js';
+import {MapLocationModel} from './viewmodels/MapLocationModel.js';
 import * as $ from 'jquery';
+import * as toastr from 'toastr';
+import './../node_modules/toastr/build/toastr.css';
+import './content/app.css';
 
-function AppViewModel() {
-    this.firstName = ko.observable("Bert");
-    this.lastName = ko.observable("Bertington");
-    // this.mapLocationViewModel = new MapLocationViewModel();
+function SideNavViewModel(){
+  if(!filter){
+    filter = null;
+  }
+  var self = this;
 
-    this.fullName = ko.computed(function() {
-        return this.firstName() + " " + this.lastName();
-    }, this);
+  var pushData = function(data){
+    var mapData = [];
+    $.each(data.responseJSON, function(index,value){
+      mapData.push(new MapLocationModel(value, index));
+    });
+    return mapData;
+  };
+  self.mapData = ko.observableArray([]);
+  self.mapFilter = ko.observable();
+  self.filterMapData = self.mapData.filter(function(mapData){
+    var regEx = new RegExp(self.mapFilter());
+    return !self.mapFilter() || regEx.exec(mapData.business_name.toLowerCase());
+  });
+
+  //fetch location data on initial page load
+  $(document).ready(function() {
+    var data = $.getJSON('https://data.muni.org/resource/mdfi-bspc.json', function(data){
+    })
+    .done(function(){
+      toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      };
+      toastr.success("","Successful GET of muni data");
+      self.mapData(pushData(data, null));
+    })
+    .fail(function(jqXHR, status, error){
+      console.log('fail');
+      toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      };
+      toastr.error(error, "Error calling Muni Data");
+    });
+  });
 }
 
-// Activates knockout.js
-ko.applyBindings(new AppViewModel());
+ko.applyBindings(new SideNavViewModel());
 
-//handle sidebar collapse
+//setup listeners and create map
 $(document).ready(function() {
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });
-});
-
-//fetch location data
-$(document).ready(function() {
-  var data = $.getJSON('https://data.muni.org/resource/mdfi-bspc.json', function(data){
-    var abcd = [];
-    console.log("asdf");
-    $.each(data, function(count){
-      // console.log(data[count]);
-      abcd.push(new MapLocationViewModel(data[count]));
-      if(count<2)
-      console.log(new MapLocationViewModel(data[count]));
-    });
-  });
 });
