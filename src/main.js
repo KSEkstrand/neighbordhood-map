@@ -37,6 +37,8 @@ function SideNavViewModel(){
   self.mapFilter = ko.observable();
   self.greatestIndex = ko.observable();
   var filterCap = 0;
+  //filter does not allow access to pre or post looping, so we have to set
+  //counters outside of the filter functionality and reset at end of collection
   self.filterMapData = self.mapData.filter(function(singleMapData){
     var regEx = new RegExp(self.mapFilter());
 
