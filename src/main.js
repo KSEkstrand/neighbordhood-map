@@ -6,13 +6,27 @@ import * as toastr from 'toastr';
 import './../node_modules/toastr/build/toastr.css';
 import './content/app.css';
 
+(function(){
+  $.ajaxSetup({ cache:false });
+})();
 
 //util function to help push data to an array
 var pushData = function(data){
   var mapData = [];
+  var indexDropper = 0;
   $.each(data.responseJSON, function(index,value){
-    var singleMapData = new MapLocationModel(value, index);
-    mapData.push(singleMapData);
+
+    //drop the index by x value if a location will be omitted
+    if(!value.location){
+      indexDropper++;
+    }
+
+    //remove anything without a location tag
+    if(value.location){
+      var singleMapData = new MapLocationModel(value, index-indexDropper);
+      addMarker(singleMapData);
+      mapData.push(singleMapData);
+    }
   });
   return mapData;
 };
@@ -22,22 +36,28 @@ function SideNavViewModel(){
   self.mapData = ko.observableArray([]);
   self.mapFilter = ko.observable();
   self.greatestIndex = ko.observable();
-  self.filterMapData = self.mapData.filter(function(mapData){
+  var filterCap = 0;
+  self.filterMapData = self.mapData.filter(function(singleMapData){
     var regEx = new RegExp(self.mapFilter());
 
     //this will always iterate over all items, and we only want to call clearMarkers once
-    if(mapData.id === "mapId" + 0){
+    if(singleMapData.id === 0){
       clearMarkers();
     }
-    if(!self.mapFilter() || regEx.exec(mapData.business_name.toLowerCase())){
-      addMarker(mapData);
-      if(mapData.id === "mapId" + self.greatestIndex){
-        renderMap();
+    //limit to filter cap amount - 50 seems like enough.
+    //User should use filter options to filter the side bar
+    if(filterCap < 50){
+      if(!self.mapFilter() || regEx.exec(singleMapData.business_name.toLowerCase())){
+        filterCap++;
+        showMarker(singleMapData.id);
+        return true;
       }
-      return true;
+    }
+    if(singleMapData.id === self.mapData().length-1){
+      //reset filter cap after all values have been filtered
+      filterCap = 0;
     }
   });
-
 
   //fetch location data on initial page load
   $(document).ready(function() {
@@ -66,7 +86,6 @@ function SideNavViewModel(){
       self.greatestIndex = data.length;
     })
     .fail(function(jqXHR, status, error){
-      console.log('fail');
       toastr.options = {
         "closeButton": true,
         "debug": false,

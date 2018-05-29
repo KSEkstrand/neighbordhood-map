@@ -8,7 +8,6 @@
     <title>Anchorage Muni Map</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
   </head>
   <body>
 
@@ -17,10 +16,13 @@
 
       <!--this is the sidebar for filtering-->
       <nav id="sidebar">
-        <input id="filter" class="nav nav-pills flex-column" data-bind="value: mapFilter"></input>
+        <h4>Muni Data Locations</h4>
+        <div>
+          <input id="filter" class="" placeholder="Filter Locations" data-bind="value: mapFilter"></input>
+        </div>
         <ul id="locationsContainer" data-bind="foreach: filterMapData" class="nav nav-pills flex-column">
           <li class="nav-item">
-            <a href="#" data-target="click: selectMapMarker()">
+            <a href="#" data-bind="click: selectMapMarker">
               <span data-bind="text: business_name"></span>
             </a>
           </li>
@@ -33,7 +35,7 @@
         <!-- this is the navbar area -->
         <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
           <div class="map-icon-border">
-            <a href="#" id="sidebarCollapse" data-toggle="collapse">
+            <a href="#" id="sidebarCollapse" data-toggle="collapse" class="markerid">
                 <i class="fa fa-map fa-2x py-2 p-1"></i>
             </a>
           </div>
@@ -47,9 +49,17 @@
       </div>
     </div>
 
-    <!--this is the area for inline map scripting-->
+
+  <!-- load bundle for dependencies -->
+  <script src="./bundle.js"></script>
+
+  <!--this is the area for inline map scripting-->
   <script>
+    //setting global variables to be controlled by inline js code
+    //won't worry about global params because map is a window object already
     var markers = [];
+    var infoWindows = [];
+    var selectedMarkerId;
 
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -68,13 +78,30 @@
           draggable: false,
           map: map
         });
-        marker.addListener('click', function(){
-          this.setAnimation(google.maps.Animation.BOUNCE);
-          var innerMarker = this;
-          setTimeout(function(){ innerMarker.setAnimation(null); }, 750);
+        var info = new google.maps.InfoWindow({
+          content: mapLocation.infoWindow
         });
+        infoWindows.push(info);
+        marker.addListener('click', buildDefaultMarker(mapLocation.id, marker));
+        markers.push(marker);
+      }
+    }
 
-        markers[mapLocation.id] = (marker);
+    function buildDefaultMarker(id, marker){
+      return function(){
+        resetSelectedMarker(selectedMarkerId);
+        selectedMarkerId = id;
+        setSelectedMarker(id);
+        infoWindows[id].open(map, marker);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        map.panTo(marker.getPosition());
+        setTimeout(function(){ marker.setAnimation(null); }, 750);
+      }
+    }
+
+    function showMarker(index) {
+      if(markers[index]){
+        markers[index].setMap(map);
       }
     }
 
@@ -82,14 +109,61 @@
       for (var i = 0; i < markers.length; i++) {
          markers[i].setMap(null);
        }
-      markers = [];
     }
-  </script>
+
+    function setSelectedMarker(id){
+      selectedMarkerId = id;
+      var selectedMarker = markers[id];
+      selectedMarker.setIcon({
+        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+        scale: 7,
+        fillColor: "#00F",
+        fillOpacity: 1,
+        strokeWeight: 1
+      });
+      selectedMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+    }
+
+    function resetSelectedMarker(id){
+      if(!selectedMarkerId && selectedMarkerId!==0){
+        return;
+      }
+      markers[id].setMap(null);
+      var marker = new google.maps.Marker({
+        position:  markers[id].getPosition(),
+        draggable: false,
+        map: map
+      });
+      marker.addListener('click', buildDefaultMarker(id, marker));
+
+
+      markers[id] = marker;
+      markers[id].setMap(map);
+    }
+
+  //Since I already have external API access to anchorage munit data, yelp data is a nice to have
+  //  function buildYelpReviewData(phone){
+  //   var url = 'https://api.yelp.com/v3/businesses/search/phone?phone=' + '+1' + phone;
+  //   var data = $.getJSON(url, function(data){})
+  //   .done(function(){
+  //     var reviewUrl = 'https://api.yelp.com/v3/businesses/' + data.id;
+  //     var reviewData = $.getJSON(url, function(innerData){})
+  //     .done(function(){
+  //       return innerData.rating;
+  //     })
+  //     .fail(function(){
+  //
+  //     });
+  //   })
+  //   .fail(function(){
+  //
+  //   });
+  // };
+</script>
 
     <!--this is the area for loading all other scripts-->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
      type="text/javascript"></script>
-    <script src="./bundle.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" async integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-marker-clusterer/1.0.0/markerclusterer_compiled.js" async integrity="sha256-eOXHHkYbq+SyQdCB77WF6zxVYz2BcBjdXHeNZyiwvk4=" crossorigin="anonymous"></script>
   </body>
