@@ -1,3 +1,5 @@
+"use strict";
+
 import * as ko from 'knockout';
 import * as kop from './knockout-projections.js';
 import {MapLocationModel} from './viewmodels/MapLocationModel.js';
@@ -7,7 +9,7 @@ import './../node_modules/toastr/build/toastr.css';
 import './content/app.css';
 
 (function(){
-  $.ajaxSetup({ cache:false });
+  $.ajaxSetup({ cache:true });
 })();
 
 //util function to help push data to an array
@@ -40,7 +42,10 @@ function SideNavViewModel(){
   //filter does not allow access to pre or post looping, so we have to set
   //counters outside of the filter functionality and reset at end of collection
   self.filterMapData = self.mapData.filter(function(singleMapData){
-    var regEx = new RegExp(self.mapFilter());
+    var regEx;
+    if(self.mapFilter()){
+      regEx = new RegExp(self.mapFilter().toLowerCase());
+    }
 
     //this will always iterate over all items, and we only want to call clearMarkers once
     if(singleMapData.id === 0){

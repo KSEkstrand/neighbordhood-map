@@ -1,3 +1,4 @@
+"use strict";
 function LocationViewModel(data){
   if(data!==null && data!=='undefined')  {
     this.type = data.type;

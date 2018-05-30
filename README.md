@@ -20,6 +20,8 @@ Run NPM start to start the debug. This will setup the bundle.js using the predef
 
 Load index.html to see the application in action.
 
+For a live demo, see: https://ksekstrand.github.io/neighbordhood-map/index.html
+
 ## Built With
 
 * [Webpack](https://webpack.js.org/) - Bundling / Compiling framework

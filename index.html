@@ -73,55 +73,69 @@
       if(mapLocation.location) {
         var longitude= mapLocation.location.coordinates[0];
         var latitude = mapLocation.location.coordinates[1];
-        var marker = new google.maps.Marker({
-          position: { lat: latitude , lng: longitude },
-          draggable: false,
-          map: map
-        });
+        var marker = buildDefaultMarker(mapLocation.id, {lat: latitude, lng: longitude});
+        markers.push(marker);
         var info = new google.maps.InfoWindow({
           content: mapLocation.infoWindow
         });
+        google.maps.event.addListener(info,'closeclick',function(){
+          if(selectedMarkerId || selectedMarkerId === 0){
+            resetSelectedMarker(selectedMarkerId);
+          }
+        });
         infoWindows.push(info);
-        marker.addListener('click', buildDefaultMarker(mapLocation.id, marker));
-        markers.push(marker);
+        buildDefaultMarker(mapLocation.id);
       }
     }
 
-    function buildDefaultMarker(id, marker){
-      return function(){
-        resetSelectedMarker(selectedMarkerId);
-        selectedMarkerId = id;
-        setSelectedMarker(id);
-        infoWindows[id].open(map, marker);
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        map.panTo(marker.getPosition());
-        setTimeout(function(){ marker.setAnimation(null); }, 750);
-      }
+    function buildDefaultMarker(id, latLng){
+      var marker = new google.maps.Marker({
+        position: latLng,
+        draggable: false,
+        map: map
+      });
+      google.maps.event.addListener(marker,'click', function(e){
+        if(selectedMarkerId != id){
+          resetSelectedMarker(selectedMarkerId);
+          selectedMarkerId = id;
+
+          marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+          marker.setIcon({
+            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+            scale: 7,
+            fillColor: "#00F",
+            fillOpacity: 1,
+            strokeWeight: 1
+          });
+          infoWindows[id].open(map, marker);
+          map.panTo(marker.getPosition());
+        }
+        //need to wait for icon to finish changing,
+        //so set short timeout or the setAnimation will be ignored
+        setTimeout(function(){
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }, 25);
+
+        //Stop the bouncing after time period
+        setTimeout(function(){
+          marker.setAnimation(null);
+        }, 750);
+      });
+      return marker;
     }
 
+    //show a specific marker by setting map back to map
     function showMarker(index) {
       if(markers[index]){
         markers[index].setMap(map);
       }
     }
 
+    //hide all markers on page by setting map to null, but keep already built markers
     function clearMarkers() {
       for (var i = 0; i < markers.length; i++) {
          markers[i].setMap(null);
        }
-    }
-
-    function setSelectedMarker(id){
-      selectedMarkerId = id;
-      var selectedMarker = markers[id];
-      selectedMarker.setIcon({
-        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-        scale: 7,
-        fillColor: "#00F",
-        fillOpacity: 1,
-        strokeWeight: 1
-      });
-      selectedMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
     }
 
     function resetSelectedMarker(id){
@@ -129,42 +143,22 @@
         return;
       }
       markers[id].setMap(null);
-      var marker = new google.maps.Marker({
-        position:  markers[id].getPosition(),
-        draggable: false,
-        map: map
-      });
-      marker.addListener('click', buildDefaultMarker(id, marker));
-
+      var marker =  buildDefaultMarker(id, markers[id].getPosition());
 
       markers[id] = marker;
       markers[id].setMap(map);
     }
-
-  //Since I already have external API access to anchorage munit data, yelp data is a nice to have
-  //  function buildYelpReviewData(phone){
-  //   var url = 'https://api.yelp.com/v3/businesses/search/phone?phone=' + '+1' + phone;
-  //   var data = $.getJSON(url, function(data){})
-  //   .done(function(){
-  //     var reviewUrl = 'https://api.yelp.com/v3/businesses/' + data.id;
-  //     var reviewData = $.getJSON(url, function(innerData){})
-  //     .done(function(){
-  //       return innerData.rating;
-  //     })
-  //     .fail(function(){
-  //
-  //     });
-  //   })
-  //   .fail(function(){
-  //
-  //   });
-  // };
-</script>
-
-    <!--this is the area for loading all other scripts-->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
-     type="text/javascript"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" async integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-marker-clusterer/1.0.0/markerclusterer_compiled.js" async integrity="sha256-eOXHHkYbq+SyQdCB77WF6zxVYz2BcBjdXHeNZyiwvk4=" crossorigin="anonymous"></script>
+    function mapError(){
+      console.log("error loading map!")
+    }
+  </script>
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <!--this is the area for loading all other scripts-->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkIL1OE5rop_845tdC1X5CQ4Cz2mhWuc&callback=initMap"
+   onerror=mapError() type="text/javascript"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" async defer integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
   </body>
 </html>

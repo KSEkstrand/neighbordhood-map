@@ -1,26 +1,27 @@
+"use strict";
 import {LocationViewModel} from './LocationViewModel.js';
 import * as ko from 'knockout';
 import * as $ from 'jquery';
 
 //Since I already have external API access to anchorage muni data, yelp data is a nice to have
 //Leave this unused for now
- function buildYelpReviewData(phone){
-  var url = 'https://api.yelp.com/v3/businesses/search/phone?phone=' + '+1' + phone;
-  var data = $.getJSON(url, function(data){})
-  .done(function(){
-    var reviewUrl = 'https://api.yelp.com/v3/businesses/' + data.id;
-    var reviewData = $.getJSON(url, function(innerData){})
-    .done(function(){
-      return innerData.rating;
-    })
-    .fail(function(){
-
-    });
-  })
-  .fail(function(){
-
-  });
-}
+//  function buildYelpReviewData(phone){
+//   var url = 'https://api.yelp.com/v3/businesses/search/phone?phone=' + '+1' + phone;
+//   var data = $.getJSON(url, function(data){})
+//   .done(function(){
+//     var reviewUrl = 'https://api.yelp.com/v3/businesses/' + data.id;
+//     var reviewData = $.getJSON(url, function(innerData){})
+//     .done(function(){
+//       return innerData.rating;
+//     })
+//     .fail(function(){
+//
+//     });
+//   })
+//   .fail(function(){
+//
+//   });
+// }
 
 var buildInfoWindowText = function(data){
   var dateSubstring = data.inspection_date.substring(0,data.inspection_date.lastIndexOf('T'));
