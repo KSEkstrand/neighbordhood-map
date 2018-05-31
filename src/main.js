@@ -22,7 +22,6 @@ var pushData = function(data){
     if(!value.location){
       indexDropper++;
     }
-
     //remove anything without a location tag
     if(value.location){
       var singleMapData = new MapLocationModel(value, index-indexDropper);

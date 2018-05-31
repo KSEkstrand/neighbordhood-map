@@ -46,11 +46,6 @@ var buildInfoWindowText = function(data){
   return infoWindow;
 };
 
-var buildInspectionDate = function(date){
-
-  return substring;
-};
-
 function MapLocationModel(data,index) {
     this.business_address = data.business_address;
     this.business_id = data.business_id;
